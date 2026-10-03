@@ -1,0 +1,26 @@
+image:
+  repository: registry.rimori.se/language/touriser
+  pullPolicy: IfNotPresent
+  # Set by the pipeline: --set image.tag=<branch>-<sha>
+  tag: "latest"
+
+imagePullSecrets:
+  - name: rimori-registry
+
+host: touriser.rimori.se
+
+service:
+  port: 3000
+
+# SQLite file lives here. Single replica only (SQLite + ReadWriteOnce volume).
+# Do NOT add backups/snapshots for this volume: plans must be gone 30 days after upload.
+persistence:
+  size: 1Gi
+  storageClass: ""
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 384Mi

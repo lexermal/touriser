@@ -1,0 +1,6 @@
+apiVersion: v2
+name: touriser
+description: Touriser travel navigator (touriser.rimori.se)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
