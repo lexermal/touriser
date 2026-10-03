@@ -17,12 +17,13 @@ export function StopCard({ stop, belowButton }: { stop: TimedStop; belowButton?:
   const known = (t: string) => (t && !isEmptyCell(t) ? t : "");
   const transport = known(stop.transport);
   const travelTime = known(stop.travelTime);
+  const time = timeLabel(stop);
 
   return (
-    <article className="space-y-4" data-testid="stop-card">
+    <article className="space-y-5" data-testid="stop-card">
       <div>
-        <h1 className="text-[1.7rem] font-bold leading-tight">
-          <span className="mr-2" title={category.label} aria-label={category.label}>
+        <h1 className="font-display text-[2.1rem] font-semibold leading-[1.05] tracking-tight">
+          <span className="mr-2 inline-block -translate-y-0.5 text-[1.8rem]" title={category.label} aria-label={category.label}>
             {category.icon}
           </span>
           <span data-testid="stop-name">
@@ -30,20 +31,27 @@ export function StopCard({ stop, belowButton }: { stop: TimedStop; belowButton?:
           </span>
         </h1>
         {stop.info && !isEmptyCell(stop.info) && (
-          <p className="mt-2 text-slate-700 dark:text-slate-300" data-testid="stop-info">
+          <p className="mt-3 text-[1.02rem] leading-relaxed text-[color-mix(in_srgb,var(--ink)_80%,transparent)]" data-testid="stop-info">
             <Inline text={stop.info} />
           </p>
         )}
-        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-          <span className="font-medium tabular-nums text-slate-600 dark:text-slate-400" data-testid="stop-time">
-            {timeLabel(stop)}
-          </span>
-          {stop.group && (
-            <span className="rounded-full bg-violet-100 px-2.5 py-0.5 font-medium text-violet-800 dark:bg-violet-950 dark:text-violet-300">
-              {stop.group}
-            </span>
-          )}
-        </p>
+        {(time || stop.group) && (
+          <p className="mt-3 flex flex-wrap items-center gap-2">
+            {time && (
+              <span
+                className="rounded-full border border-[var(--line)] bg-[var(--card)] px-3 py-1 text-sm font-medium text-[var(--muted)]"
+                data-testid="stop-time"
+              >
+                {time}
+              </span>
+            )}
+            {stop.group && (
+              <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-sm font-medium text-[var(--accent)]">
+                {stop.group}
+              </span>
+            )}
+          </p>
+        )}
       </div>
 
       {stop.links.length > 0 && (
@@ -54,9 +62,9 @@ export function StopCard({ stop, belowButton }: { stop: TimedStop; belowButton?:
               href={l.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium dark:border-slate-700 dark:bg-slate-900"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--card)] px-3.5 py-2 text-sm font-medium shadow-sm transition active:scale-95"
             >
-              🔗 {l.label}
+              <span aria-hidden>🔗</span> {l.label}
             </a>
           ))}
         </div>
@@ -67,22 +75,27 @@ export function StopCard({ stop, belowButton }: { stop: TimedStop; belowButton?:
           href={stop.mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full rounded-2xl bg-orange-500 px-5 py-4 text-center text-white shadow-lg shadow-orange-500/20 active:bg-orange-600"
+          className="group flex w-full items-center justify-between gap-3 rounded-[1.4rem] bg-gradient-to-br from-[var(--accent)] to-[#ff7d45] py-3 pl-6 pr-3 text-white shadow-[0_6px_14px_-8px_var(--accent)] transition active:scale-[0.98]"
           data-testid="navigate"
         >
-          <span className="flex items-center justify-center gap-2 text-lg font-semibold">
-            Navigate
-            <span className="font-normal">({[transportIcon(transport), travelTime].filter(Boolean).join(" ")})</span>
+          <span className="flex items-baseline gap-2">
+            <span className="text-lg font-semibold">Navigate</span>
+            <span className="text-base opacity-90">({[transportIcon(transport), travelTime].filter(Boolean).join(" ")})</span>
+          </span>
+          {/* SVG instead of the "→" glyph, which sits below the middle in most fonts */}
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20 transition group-active:translate-x-0.5" aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </span>
         </a>
       ) : (
-        <div className="rounded-2xl bg-slate-200 px-5 py-4 text-center text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+        <div className="rounded-[1.4rem] border border-dashed border-[var(--line)] px-5 py-4 text-center text-[var(--muted)]">
           No address to navigate to yet
         </div>
       )}
 
       {belowButton}
-
     </article>
   );
 }

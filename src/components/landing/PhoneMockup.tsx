@@ -1,3 +1,6 @@
+// Bump after retaking the screenshots, so browsers don't keep showing a cached old one.
+const SCREENSHOT_VERSION = 2;
+
 /**
  * Phone frame around a real screenshot of the trip navigator (light/dark follow the system).
  * The whole phone links to the live demo; the "Try it live" pill makes that discoverable.
@@ -16,11 +19,11 @@ export function PhoneMockup() {
       <div className="phone relative rotate-[3deg] rounded-[2.4rem] bg-[#15130f] p-[0.55rem] shadow-[0_40px_80px_-30px_rgba(29,26,21,0.7)] transition duration-500 group-hover:-translate-y-2 group-hover:rotate-0 group-hover:shadow-[0_50px_90px_-30px_rgba(29,26,21,0.8)] group-focus-visible:rotate-0 group-focus-visible:ring-4 group-focus-visible:ring-[var(--accent)]">
         <div className="absolute left-1/2 top-[0.95rem] z-10 h-[0.9rem] w-[4.5rem] -translate-x-1/2 rounded-full bg-[#15130f]" aria-hidden />
         {/* Status-bar strip so the notch doesn't cover the app's day chips */}
-        <div className="overflow-hidden rounded-[1.9rem] bg-[#f8fafc] pt-7 dark:bg-[#020617]">
+        <div className="overflow-hidden rounded-[1.9rem] bg-[#f4ecdf] pt-7 dark:bg-[#0c0f13]">
         <picture>
-          <source srcSet="/landing/navigator-dark.jpg" media="(prefers-color-scheme: dark)" />
+          <source srcSet={`/landing/navigator-dark.jpg?v=${SCREENSHOT_VERSION}`} media="(prefers-color-scheme: dark)" />
           <img
-            src="/landing/navigator-light.jpg"
+            src={`/landing/navigator-light.jpg?v=${SCREENSHOT_VERSION}`}
             alt="The trip app on a phone: it shows the current stop (Reichstag dome, 45 min left), a big Navigate button with 7 min walking, and the next stop."
             width={780}
             height={1560}

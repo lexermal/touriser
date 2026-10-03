@@ -36,8 +36,9 @@ body {
   padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
 }
 
-/* ───────────── Landing: vintage travel-ticket look ───────────── */
-.landing {
+/* ───────────── Travel-ticket look (landing page + trip app) ───────────── */
+.landing,
+.trip-theme {
   --paper: #f4ecdf;
   --card: #fffaf1;
   --ink: #1d1a15;
@@ -52,7 +53,8 @@ body {
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  .landing {
+  .landing,
+  .trip-theme {
     --paper: #0c0f13;
     --card: #141920;
     --ink: #f2e8d8;

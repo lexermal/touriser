@@ -23,25 +23,32 @@ type Props = {
 // Only shown for the current stop; a browsed stop needs no status.
 function StatusLine({ stop, isNow, nowState, now }: { stop: TimedStop; isNow: boolean; nowState: NowState; now: number }) {
   let text: React.ReactNode = null;
+  let tone = "bg-[var(--card)] text-[var(--muted)]";
   if (isNow && nowState.kind === "now") {
+    tone = "bg-emerald-600/10 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300";
     text = (
-      <span className="font-semibold text-green-700 dark:text-green-400">
-        ● Now{stop.endMs ? ` · ${formatCountdown(stop.endMs - now)} left` : ""}
-      </span>
+      <>
+        <span className="motion-safe:animate-pulse">●</span> Now{stop.endMs ? ` · ${formatCountdown(stop.endMs - now)} left` : ""}
+      </>
     );
   } else if (isNow && (nowState.kind === "next" || nowState.kind === "before")) {
     const leave = stop.leaveByMs;
+    tone = "bg-[var(--accent-soft)] text-[var(--accent)]";
     text = (
-      <span className="font-semibold text-orange-600 dark:text-orange-400">
+      <>
         {nowState.kind === "before" ? "Trip starts" : "Next stop"} in {formatCountdown((stop.startMs ?? now) - now)}
         {leave && nowState.kind === "next" ? (leave <= now ? " · leave now" : ` · leave in ${formatCountdown(leave - now)}`) : ""}
-      </span>
+      </>
     );
   } else if (isNow && nowState.kind === "after") {
-    text = <span className="font-semibold text-slate-500">Trip finished, hope it was great</span>;
+    text = <>Trip finished, hope it was great</>;
   }
   if (!text) return null;
-  return <p className="text-sm" data-testid="status">{text}</p>;
+  return (
+    <p className={`inline-flex rounded-full px-3.5 py-1.5 text-sm font-semibold ${tone}`} data-testid="status">
+      <span>{text}</span>
+    </p>
+  );
 }
 
 export function Navigator(p: Props) {
@@ -86,7 +93,7 @@ export function Navigator(p: Props) {
         if (Math.abs(dx) > 70) go(dx < 0 ? index + 1 : index - 1);
       }}
     >
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 pt-[env(safe-area-inset-top)] backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+      <header className="sticky top-0 z-10 border-b border-[var(--line)] bg-[color-mix(in_srgb,var(--paper)_88%,transparent)] pt-[env(safe-area-inset-top)] backdrop-blur-md">
         <div ref={chipsRef} className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-2">
           {stored.trip.days.map((d) => {
             const active = d.index === day.index;
@@ -96,12 +103,14 @@ export function Navigator(p: Props) {
                 key={d.index}
                 data-active={active}
                 onClick={() => p.onOpenDay(d.index)}
-                className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${
-                  active ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900" : "bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                  active
+                    ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
+                    : "border-[var(--line)] bg-[var(--card)] text-[var(--muted)]"
                 }`}
               >
                 {d.weekday} {Number(d.date.slice(8))}
-                {today && <span className="ml-1 text-orange-500">●</span>}
+                {today && <span className="ml-1 text-[var(--accent)]">●</span>}
               </button>
             );
           })}
@@ -119,8 +128,8 @@ export function Navigator(p: Props) {
                 onClick={() => p.onOption(day.index, o)}
                 className={`rounded-full border px-3 py-1 ${
                   (p.options[day.index] ?? null) === o
-                    ? "border-violet-600 bg-violet-600 text-white"
-                    : "border-slate-300 dark:border-slate-700"
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                    : "border-[var(--line)] bg-[var(--card)]"
                 }`}
               >
                 {o ? o.split(/\s+[—–-]\s+/)[0] : "Show all"}
@@ -129,33 +138,42 @@ export function Navigator(p: Props) {
           </div>
         )}
 
+        {/* key replays the entry animation whenever another stop is shown */}
+        <div key={stop.id} className="rise" style={{ animationDuration: "380ms" }}>
         <StopCard
           stop={stop}
           belowButton={
             next && (
-              <>
-                <hr className="border-slate-200 dark:border-slate-800" />
-                <button onClick={() => go(index + 1)} className="block w-full text-left" data-testid="next-stop">
-                  <span className="block text-sm text-slate-500">
+              <button
+                onClick={() => go(index + 1)}
+                className="relative mt-2 flex w-full items-center gap-3 rounded-2xl border border-dashed border-[var(--line)] bg-[var(--card)] p-4 text-left transition active:scale-[0.99]"
+                data-testid="next-stop"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm text-[var(--muted)]">
                     Next stop: {[next.category, next.start && `at ${next.start}`].filter(Boolean).join(" ")}
                   </span>
-                  <span className="mt-0.5 block text-lg font-semibold">
+                  <span className="mt-1 block text-lg font-semibold leading-snug">
                     <Inline text={next.name} />
                   </span>
-                </button>
-              </>
+                </span>
+                <span className="text-xl text-[var(--muted)]" aria-hidden>
+                  ›
+                </span>
+              </button>
             )
           }
         />
+        </div>
 
         {askNotify && (
-          <div className="rounded-2xl bg-slate-900 p-4 text-sm text-white dark:bg-slate-800">
+          <div className="rounded-2xl bg-[var(--ink)] p-4 text-sm text-[var(--paper)]">
             <p>Keep a shortcut to this trip in your notifications. One tap gets you back here.</p>
             <div className="mt-3 flex gap-3">
-              <button onClick={async () => { await enableNotifications(); setAskNotify(false); }} className="rounded-lg bg-orange-500 px-3 py-2 font-semibold">
+              <button onClick={async () => { await enableNotifications(); setAskNotify(false); }} className="rounded-full bg-[var(--accent)] px-4 py-2 font-semibold text-white">
                 Turn on
               </button>
-              <button onClick={() => setAskNotify(false)} className="px-3 py-2 text-slate-300">
+              <button onClick={() => setAskNotify(false)} className="px-3 py-2 opacity-70">
                 Not now
               </button>
             </div>
@@ -163,17 +181,30 @@ export function Navigator(p: Props) {
         )}
       </main>
 
-      <nav className="pb-safe fixed bottom-0 left-1/2 z-10 w-full max-w-md -translate-x-1/2 border-t border-slate-200 bg-slate-50/95 px-4 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
-        <div className="flex gap-3">
-          <button onClick={() => go(index - 1)} disabled={index === 0} className="flex-1 rounded-xl bg-white py-3.5 text-xl shadow-sm disabled:opacity-30 dark:bg-slate-900" aria-label="Previous stop">
+      <nav className="pb-safe fixed bottom-0 left-1/2 z-10 w-full max-w-md -translate-x-1/2 px-4">
+        <div className="flex items-center gap-2 rounded-full border border-[var(--line)] bg-[color-mix(in_srgb,var(--card)_90%,transparent)] p-1.5 shadow-[0_18px_40px_-18px_rgba(29,26,21,0.55)] backdrop-blur-md">
+          <button
+            onClick={() => go(index - 1)}
+            disabled={index === 0}
+            className="flex h-12 flex-1 items-center justify-center rounded-full text-lg transition active:bg-[var(--paper)] disabled:opacity-25"
+            aria-label="Previous stop"
+          >
             ◀
           </button>
           {!isNow && (
-            <button onClick={() => p.onSelect(null)} className="flex-1 rounded-xl bg-slate-900 py-3.5 font-semibold text-white dark:bg-white dark:text-slate-900">
+            <button
+              onClick={() => p.onSelect(null)}
+              className="h-12 flex-1 rounded-full bg-[var(--accent)] text-sm font-semibold text-white shadow-[0_8px_20px_-8px_var(--accent)]"
+            >
               Now
             </button>
           )}
-          <button onClick={() => go(index + 1)} disabled={index >= stops.length - 1} className="flex-1 rounded-xl bg-white py-3.5 text-xl shadow-sm disabled:opacity-30 dark:bg-slate-900" aria-label="Next stop">
+          <button
+            onClick={() => go(index + 1)}
+            disabled={index >= stops.length - 1}
+            className="flex h-12 flex-1 items-center justify-center rounded-full text-lg transition active:bg-[var(--paper)] disabled:opacity-25"
+            aria-label="Next stop"
+          >
             ▶
           </button>
         </div>

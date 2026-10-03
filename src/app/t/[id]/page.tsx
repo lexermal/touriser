@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { bodyFont, displayFont, monoFont } from "@/app/fonts";
 import { TripApp } from "@/components/trip/TripApp";
 import { getTrip } from "@/lib/db";
 import { DEMO_ID } from "@/lib/demoTrip";
@@ -16,5 +17,9 @@ export async function generateMetadata({ params }: PageProps<"/t/[id]">): Promis
 
 export default async function TripPage({ params }: PageProps<"/t/[id]">) {
   const { id } = await params;
-  return <TripApp id={id} />;
+  return (
+    <div className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+      <TripApp id={id} />
+    </div>
+  );
 }

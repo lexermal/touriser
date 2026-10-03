@@ -25,16 +25,16 @@ export function InfoView({ stored, canDelete, onBack, onDelete }: Props) {
       <main className="space-y-5 px-4 pt-4">
         <div>
           <h2 className="text-2xl font-bold">{trip.title}</h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[var(--muted)]">
             {trip.days[0]?.date} → {trip.days.at(-1)?.date} · times in {stored.timezone}
           </p>
         </div>
 
         {trip.basics.length > 0 && (
-          <dl className="divide-y divide-slate-200 rounded-2xl bg-white shadow-sm dark:divide-slate-800 dark:bg-slate-900">
+          <dl className="divide-y divide-[var(--line)] rounded-2xl bg-[var(--card)] shadow-sm">
             {trip.basics.map((b) => (
               <div key={b.label} className="px-4 py-3">
-                <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">{b.label}</dt>
+                <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">{b.label}</dt>
                 <dd className="mt-0.5 text-sm"><Inline text={b.value} /></dd>
               </div>
             ))}
@@ -42,7 +42,7 @@ export function InfoView({ stored, canDelete, onBack, onDelete }: Props) {
         )}
 
         {trip.sections.map((s) => (
-          <details key={s.title} className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900">
+          <details key={s.title} className="rounded-2xl bg-[var(--card)] p-4 shadow-sm">
             <summary className="font-semibold">{s.title}</summary>
             <div className="mt-3">
               <Markdown text={s.markdown} />
@@ -51,7 +51,7 @@ export function InfoView({ stored, canDelete, onBack, onDelete }: Props) {
         ))}
 
         {notify !== null && (
-          <section className="flex items-center justify-between gap-3 rounded-2xl bg-white p-4 text-sm shadow-sm dark:bg-slate-900">
+          <section className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--card)] p-4 text-sm shadow-sm">
             <span>Shortcut in notifications</span>
             <button
               onClick={async () => {
@@ -60,7 +60,7 @@ export function InfoView({ stored, canDelete, onBack, onDelete }: Props) {
                   setNotify(false);
                 } else setNotify(await enableNotifications());
               }}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 font-medium dark:border-slate-700"
+              className="rounded-lg border border-[var(--line)] px-3 py-1.5 font-medium"
             >
               {notify ? "Turn off" : "Turn on"}
             </button>
@@ -93,12 +93,12 @@ export function InfoView({ stored, canDelete, onBack, onDelete }: Props) {
             {deleteFailed && <p className="mt-2 text-red-600">Couldn&apos;t delete. Are you online?</p>}
           </section>
         ) : (
-          <p className="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-400">
+          <p className="rounded-2xl border border-[var(--line)] p-4 text-sm text-[var(--muted)]">
             This is the live demo. Its dates move with today, so you can always try it out.
           </p>
         )}
 
-        <Link href="/" className="block text-center text-sm text-slate-500 underline">
+        <Link href="/" className="block text-center text-sm text-[var(--muted)] underline">
           Create another trip
         </Link>
       </main>

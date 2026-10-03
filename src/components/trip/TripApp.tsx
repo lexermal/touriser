@@ -202,7 +202,7 @@ export function TripApp({ id }: { id: string }) {
 
   // Phone-width column: on desktop the app looks like it does on the phone, centred.
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-slate-50 md:border-x md:border-slate-200 md:shadow-xl dark:bg-slate-950 md:dark:border-slate-800">
+    <div className="trip-theme mx-auto min-h-dvh max-w-md md:border-x md:border-[var(--line)] md:shadow-2xl">
       {install === "banner" && view.kind === "nav" && <InstallBanner onClose={() => setInstall("none")} />}
       {view.kind === "nav" && (
         <Navigator
