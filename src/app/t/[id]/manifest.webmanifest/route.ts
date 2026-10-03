@@ -24,7 +24,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/t/[id]/manifest.web
     id: `/t/${id}`,
     name,
     short_name: shortName(name),
-    description: `${name} — Touriser travel navigator`,
+    description: `${name} · your Touriser trip app`,
     start_url: `/t/${id}?source=pwa`,
     scope: `/t/${id}`,
     display: "standalone",

@@ -5,8 +5,16 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Touriser · enjoy your trip, Touriser manages the highlights",
-  description: "Turn your trip plan into a phone app that always shows where you are and how to get to the next stop.",
+  // Keep in sync with the landing page headline and intro (src/components/landing/Hero.tsx).
+  title: "Enjoy your trip. Touriser manages the highlights.",
+  description:
+    "Touriser turns your travel plan into an app on your phone. It always shows the current highlight's info and what's next. With one tap you're on your way to the next highlight. Free.",
+  openGraph: {
+    title: "Enjoy your trip. Touriser manages the highlights.",
+    description: "Touriser turns your travel plan into an app on your phone. With one tap you're on your way to the next highlight. Free.",
+    siteName: "Touriser",
+    type: "website",
+  },
   // Trip pages are private-by-link; keep everything out of search engines.
   robots: { index: false, follow: false },
   appleWebApp: { capable: true, title: "Touriser", statusBarStyle: "black-translucent" },
